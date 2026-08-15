@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/client';
-import { UserPlus, Shield, User, Power, RefreshCw } from 'lucide-react';
+import { UserPlus, Shield, User, Power, RefreshCw, Edit3 } from 'lucide-react';
 import UserModal from '../components/modals/UserModal';
+import EditUserModal from '../components/modals/EditUserModal';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [userModalOpen, setUserModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -31,6 +34,16 @@ const Users = () => {
     fetchUsers();
   };
 
+  const handleOpenEdit = (user) => {
+    setEditingUser(user);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEditUser = async (id, updatedData) => {
+    await api.put(`/users/${id}`, updatedData);
+    fetchUsers();
+  };
+
   const handleToggleStatus = async (user) => {
     try {
       await api.patch(`/users/${user.id}/status`, {
@@ -49,7 +62,7 @@ const Users = () => {
         <div>
           <h1 className="text-xl font-bold text-slate-100 tracking-tight">User Account Management</h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Admin panel to create staff user accounts and manage access permissions.
+            Admin panel to create staff user accounts, elevate/lower access roles, and manage permissions.
           </p>
         </div>
 
@@ -136,17 +149,26 @@ const Users = () => {
                       {new Date(u.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => handleToggleStatus(u)}
-                        className={`p-1.5 rounded-lg transition-colors ${
-                          u.is_active
-                            ? 'text-slate-400 hover:text-rose-400 hover:bg-rose-950/30'
-                            : 'text-slate-500 hover:text-emerald-400 hover:bg-emerald-950/30'
-                        }`}
-                        title={u.is_active ? 'Deactivate User Account' : 'Activate User Account'}
-                      >
-                        <Power className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end space-x-1">
+                        <button
+                          onClick={() => handleOpenEdit(u)}
+                          className="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-950/40 rounded-lg transition-colors"
+                          title="Edit Account & Role"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleToggleStatus(u)}
+                          className={`p-1.5 rounded-lg transition-colors ${
+                            u.is_active
+                              ? 'text-slate-400 hover:text-rose-400 hover:bg-rose-950/30'
+                              : 'text-slate-500 hover:text-emerald-400 hover:bg-emerald-950/30'
+                          }`}
+                          title={u.is_active ? 'Deactivate User Account' : 'Activate User Account'}
+                        >
+                          <Power className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -160,6 +182,13 @@ const Users = () => {
         isOpen={userModalOpen}
         onClose={() => setUserModalOpen(false)}
         onSave={handleCreateUser}
+      />
+
+      <EditUserModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        user={editingUser}
+        onSave={handleSaveEditUser}
       />
     </div>
   );

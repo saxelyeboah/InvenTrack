@@ -47,6 +47,21 @@ class UserService {
 
     return await userRepository.updateStatus(id, Boolean(isActive));
   }
+
+  async updateUser(id, { name, role }) {
+    const user = await userRepository.findById(id);
+    if (!user) {
+      throw { statusCode: 404, message: 'User not found' };
+    }
+
+    const cleanName = sanitizeString(name) || user.name;
+    const validRole = role === 'ADMIN' ? 'ADMIN' : 'STAFF';
+
+    return await userRepository.update(id, {
+      name: cleanName,
+      role: validRole
+    });
+  }
 }
 
 module.exports = new UserService();

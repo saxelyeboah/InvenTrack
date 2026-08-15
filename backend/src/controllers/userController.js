@@ -29,6 +29,17 @@ class UserController {
       next(err);
     }
   }
+
+  async update(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { name, role } = req.body;
+      const updated = await userService.updateUser(id, { name, role });
+      res.json(updated);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new UserController();

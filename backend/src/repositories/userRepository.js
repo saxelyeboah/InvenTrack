@@ -33,6 +33,14 @@ class UserRepository {
     );
     return res.rows[0] || null;
   }
+
+  async update(id, { name, role }) {
+    const res = await db.query(
+      `UPDATE users SET name = $1, role = $2 WHERE id = $3 RETURNING id, name, email, role, is_active, created_at`,
+      [name.trim(), role, id]
+    );
+    return res.rows[0] || null;
+  }
 }
 
 module.exports = new UserRepository();
