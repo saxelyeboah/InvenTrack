@@ -34,12 +34,12 @@ const initSqlite = () => {
   return sqliteDb;
 };
 
-// Check if PostgreSQL is specified and reachable
-if (databaseUrl && databaseUrl.startsWith('postgres') && !databaseUrl.includes('localhost:5432')) {
+// Check if PostgreSQL URL is provided
+if (databaseUrl && (databaseUrl.startsWith('postgres://') || databaseUrl.startsWith('postgresql://'))) {
   usePostgres = true;
   pgPool = new Pool({
     connectionString: databaseUrl,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    ssl: process.env.NODE_ENV === 'production' || databaseUrl.includes('render.com') ? { rejectUnauthorized: false } : false
   });
   console.log('[InvenTrack DB] Active database: Managed PostgreSQL');
 } else {
