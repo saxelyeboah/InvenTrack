@@ -1,7 +1,7 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Bell, Shield, User, Menu, ChevronRight } from 'lucide-react';
+import { LogOut, Menu, ChevronRight } from 'lucide-react';
 
 const routeBreadcrumbs = {
   '/': ['InvenTrack', 'Overview', 'Dashboard'],
@@ -59,19 +59,10 @@ const Navbar = ({ toggleSidebar }) => {
         </nav>
       </div>
 
-      {/* Right: Notifications & User Profile */}
+      {/* Right: User Profile & Logout */}
       <div className="flex items-center space-x-4">
-        {/* Notification Bell */}
-        <button
-          className="relative p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 rounded-xl transition-colors"
-          title="Notifications"
-        >
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-sky-500 rounded-full ring-2 ring-slate-900 animate-pulse"></span>
-        </button>
-
         {user && (
-          <div className="flex items-center space-x-3 pl-3 border-l border-slate-800">
+          <div className="flex items-center space-x-3">
             {/* Avatar Circle */}
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-sky-600 to-indigo-600 text-white font-bold text-xs ring-2 ring-sky-500/20 shadow-md">
               {getInitials(user.name)}
