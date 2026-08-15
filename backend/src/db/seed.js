@@ -106,7 +106,7 @@ const seed = async () => {
     process.exit(1);
   } finally {
     client.release();
-    if (db.pool) {
+    if (require.main === module && db.pool) {
       await db.pool.end();
     }
   }
